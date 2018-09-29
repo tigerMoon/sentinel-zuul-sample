@@ -55,9 +55,12 @@ By default use `SentinelOkHttpRoutingFilter` as route filter:
 ```
 
 
-filters create structure like:
+Filters create structure like:
+
 
 ```
+add vm config: -Dcsp.sentinel.api.port=18990
+
 curl http://localhost:18990/tree?type=root
 
 EntranceNode: machine-root(t:3 pq:0 bq:0 tq:0 rt:0 prq:0 1mp:0 1mb:0 1mt:0)
