@@ -1,0 +1,37 @@
+
+server:
+  port: 8990
+
+management:
+  security:
+    enabled: false
+
+zuul:
+  routes:
+    book:
+      path: /book/**
+      serviceId: book
+    coke:
+      path: /coke/**
+      serviceId: coke
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: zuul-gateway
+
+
+#    with no eureka example
+#    zuul:
+#      routes:
+#        foo:
+#          path: /foo/**
+#          url: http://localhost:8801/foo
+#
+#    ribbon:
+#      eureka:
+#        enabled: false
