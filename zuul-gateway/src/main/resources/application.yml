@@ -25,6 +25,9 @@ spring:
     name: zuul-gateway
 
 
+
+
+
 #    with no eureka example
 #    zuul:
 #      routes:

@@ -1,9 +1,14 @@
 package hello;
 
-import hello.filter.SentinelServiceZuulFilter;
+import com.netflix.discovery.DiscoveryClient;
+import hello.filter.SentinelOkHttpRoutingFilter;
+import hello.filter.SentinelRibbonFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.health.OrderedHealthAggregator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EurekaHealthCheckHandler;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
@@ -22,10 +27,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author tiger
+ */
 @EnableZuulProxy
 @SpringBootApplication
 @EnableTurbine
 @EnableHystrixDashboard
+@EnableDiscoveryClient
 public class GatewayApplication {
 
     private List<RibbonRequestCustomizer> requestCustomizers = Collections.emptyList();
@@ -40,9 +49,14 @@ public class GatewayApplication {
     @Bean
     public RibbonRoutingFilter sentinelServiceZuulFilter(ProxyRequestHelper helper,SpringClientFactory clientFactory,
                                                                ZuulProperties zuulProperties){
-        RibbonRoutingFilter filter = new SentinelServiceZuulFilter(helper, ribbonCommandFactory(clientFactory,zuulProperties),
+        RibbonRoutingFilter filter = new SentinelRibbonFilter(helper, ribbonCommandFactory(clientFactory,zuulProperties),
                 this.requestCustomizers);
         return filter;
+    }
+
+    @Bean
+    public SentinelOkHttpRoutingFilter sentinelOkHttpRoutingFilter(){
+        return new SentinelOkHttpRoutingFilter();
     }
 
     private RibbonCommandFactory<?> ribbonCommandFactory(
@@ -51,6 +65,9 @@ public class GatewayApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication.class, args);
+        new SpringApplicationBuilder(GatewayApplication.class)
+                .properties("zuul.RibbonRoutingFilter.route.disable=true",
+                        "zuul.SentinelRibbonFilter.route.disable=true")
+                .run(args);
     }
 }

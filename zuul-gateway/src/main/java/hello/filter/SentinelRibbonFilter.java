@@ -26,18 +26,23 @@ import org.springframework.http.client.ClientHttpResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class SentinelServiceZuulFilter extends RibbonRoutingFilter {
+import static org.springframework.cloud.netflix.zuul.filters.support.FilterConstants.SERVICE_ID_KEY;
+
+/**
+ * @author tiger
+ */
+public class SentinelRibbonFilter extends RibbonRoutingFilter {
 
     private static final String EMPTY_ORIGIN = "";
 
-    Logger logger = LoggerFactory.getLogger(SentinelServiceZuulFilter.class);
+    private Logger logger = LoggerFactory.getLogger(SentinelRibbonFilter.class);
 
-    public SentinelServiceZuulFilter(ProxyRequestHelper helper, RibbonCommandFactory<?> ribbonCommandFactory,
-                                     List<RibbonRequestCustomizer> requestCustomizers) {
+    public SentinelRibbonFilter(ProxyRequestHelper helper, RibbonCommandFactory<?> ribbonCommandFactory,
+                                List<RibbonRequestCustomizer> requestCustomizers) {
         super(helper, ribbonCommandFactory, requestCustomizers);
     }
 
-    public SentinelServiceZuulFilter(RibbonCommandFactory<?> ribbonCommandFactory) {
+    public SentinelRibbonFilter(RibbonCommandFactory<?> ribbonCommandFactory) {
         super(ribbonCommandFactory);
     }
 
@@ -48,7 +53,7 @@ public class SentinelServiceZuulFilter extends RibbonRoutingFilter {
         this.helper.addIgnoredHeaders();
         try {
             // service target
-            String serviceTarget = (String) ctx.get("serviceId");
+            String serviceTarget = (String) ctx.get(SERVICE_ID_KEY);
             String serviceOrigin = "origin";
             logger.info("serviceTarget:{} , serviceOrigin:{}", serviceTarget,serviceOrigin);
             ContextUtil.enter(serviceTarget, serviceOrigin);
