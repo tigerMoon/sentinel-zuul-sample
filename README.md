@@ -1,5 +1,5 @@
 # sentinel-zuul-sample
-this is simple project for alibaba/Sentinel spring cloud zuul integration sample.
+this is simple project for [alibaba/Sentinel](https://github.com/alibaba/Sentinel) spring cloud zuul integration sample.
 
 Sentinel can provide `ServiceId` level and `API PATH` level for zuul flow control. 
 
