@@ -1,7 +1,7 @@
 # sentinel-zuul-sample
-this is simple project for [alibaba/Sentinel](https://github.com/alibaba/Sentinel) spring cloud zuul integration sample.
+This is simple project for [alibaba/Sentinel](https://github.com/alibaba/Sentinel) spring cloud zuul integration sample.
 
-Sentinel can provide `ServiceId` level and `API PATH` level for zuul flow control. 
+Sentinel can provide `ServiceId` level and `API Path` level flow control for zuul gateway service. 
 
 *Note*  
 this project is for zuul1.
@@ -10,7 +10,7 @@ this project is for zuul1.
 
 **eureka-server**:
 
-this module used for discovery server. when service restart. it should be restart.
+module used for discovery server. when service restart. it should be restart.
 
 **zuul-backend**
 
@@ -59,9 +59,9 @@ Filters create structure like:
 
 
 ```
-add vm config: -Dcsp.sentinel.api.port=18990
+1. add vm config: -Dcsp.sentinel.api.port=18990
 
-curl http://localhost:18990/tree?type=root
+2. curl http://localhost:18990/tree?type=root
 
 EntranceNode: machine-root(t:3 pq:0 bq:0 tq:0 rt:0 prq:0 1mp:0 1mb:0 1mt:0)
 -EntranceNode: coke(t:2 pq:0 bq:0 tq:0 rt:0 prq:0 1mp:0 1mb:0 1mt:0)
