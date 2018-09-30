@@ -48,7 +48,8 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
 
     @Override
     public Object run() {
-        Entry entry = null;
+        Entry serviceEntry = null;
+        Entry uriEntry = null;
         RequestContext ctx = RequestContext.getCurrentContext();
         this.helper.addIgnoredHeaders();
         try {
@@ -57,22 +58,22 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             String serviceOrigin = "origin";
             logger.info("serviceTarget:{} , serviceOrigin:{}", serviceTarget,serviceOrigin);
             ContextUtil.enter(serviceTarget, serviceOrigin);
-            entry = SphU.entry(serviceTarget, EntryType.IN);
+            serviceEntry = SphU.entry(serviceTarget, EntryType.IN);
 
             // url target
-            String urlTarget = FilterUtil.filterTarget(ctx.getRequest());
+            String uriTarget = FilterUtil.filterTarget(ctx.getRequest());
             // Clean and unify the URL.
             // For REST APIs, you have to clean the URL (e.g. `/foo/1` and `/foo/2` -> `/foo/:id`), or
             // the amount of context and resources will exceed the threshold.
             UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
             if (urlCleaner != null) {
-                urlTarget = urlCleaner.clean(urlTarget);
+                uriTarget = urlCleaner.clean(uriTarget);
             }
             // Parse the request origin using registered origin parser.
             String urlOrigin = parseOrigin(ctx.getRequest());
-            logger.info("urlTarget:{}, urlOrigin:{}", urlTarget,urlOrigin);
-            ContextUtil.enter(urlTarget, urlOrigin);
-            entry = SphU.entry(urlTarget, EntryType.IN);
+            logger.info("uriTarget:{}, urlOrigin:{}", uriTarget,urlOrigin);
+            ContextUtil.enter(uriTarget, urlOrigin);
+            uriEntry = SphU.entry(uriTarget, EntryType.IN);
             RibbonCommandContext commandContext = buildCommandContext(ctx);
             ClientHttpResponse response = forward(commandContext);
             setResponse(response);
@@ -86,8 +87,11 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             Tracer.trace(ex);
             throw new ZuulRuntimeException(ex);
         } finally {
-            if (entry != null) {
-                entry.exit();
+            if (serviceEntry != null) {
+                serviceEntry.exit();
+            }
+            if(uriEntry!=null){
+                uriEntry.exit();
             }
             ContextUtil.exit();
         }

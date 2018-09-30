@@ -70,14 +70,15 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
-        Entry entry = null;
+        Entry serviceEntry = null;
+        Entry uriEntry = null;
         try {
             // service target
             String serviceTarget = (String) ctx.get(SERVICE_ID_KEY);
             String serviceOrigin = "origin";
             logger.info("serviceTarget:{} , serviceOrigin:{}", serviceTarget, serviceOrigin);
             ContextUtil.enter(serviceTarget, serviceOrigin);
-            entry = SphU.entry(serviceTarget, EntryType.IN);
+            serviceEntry = SphU.entry(serviceTarget, EntryType.IN);
             // url target
             String urlTarget = FilterUtil.filterTarget(ctx.getRequest());
             // Clean and unify the URL.
@@ -91,7 +92,7 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             String urlOrigin = parseOrigin(ctx.getRequest());
             logger.info("urlTarget:{}, urlOrigin:{}", urlTarget, urlOrigin);
             ContextUtil.enter(urlTarget, urlOrigin);
-            entry = SphU.entry(urlTarget, EntryType.IN);
+            uriEntry = SphU.entry(urlTarget, EntryType.IN);
             forwardHttpRequest();
         } catch (BlockException | IOException e1) {
             throw new ZuulRuntimeException(e1);
@@ -99,8 +100,11 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             Tracer.trace(ex);
             throw new ZuulRuntimeException(ex);
         } finally {
-            if (entry != null) {
-                entry.exit();
+            if (serviceEntry != null) {
+                serviceEntry.exit();
+            }
+            if (uriEntry != null) {
+                uriEntry.exit();
             }
             ContextUtil.exit();
         }
