@@ -94,7 +94,8 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             ContextUtil.enter(urlTarget, urlOrigin);
             uriEntry = SphU.entry(urlTarget, EntryType.IN);
             forwardHttpRequest();
-        } catch (BlockException | IOException e1) {
+        } catch (BlockException e1) {
+            // do the logic when flow control happens.
             throw new ZuulRuntimeException(e1);
         } catch (Exception ex) {
             Tracer.trace(ex);

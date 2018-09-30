@@ -82,6 +82,7 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             throw new ZuulRuntimeException(ex);
         } catch (BlockException ex) {
             logger.warn("block exception:{}", ex);
+            // do the logic when flow control happens.
             throw new ZuulRuntimeException(ex);
         } catch (Exception ex) {
             Tracer.trace(ex);
