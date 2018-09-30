@@ -101,11 +101,11 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             Tracer.trace(ex);
             throw new ZuulRuntimeException(ex);
         } finally {
-            if (serviceEntry != null) {
-                serviceEntry.exit();
-            }
             if (uriEntry != null) {
                 uriEntry.exit();
+            }
+            if (serviceEntry != null) {
+                serviceEntry.exit();
             }
             ContextUtil.exit();
         }

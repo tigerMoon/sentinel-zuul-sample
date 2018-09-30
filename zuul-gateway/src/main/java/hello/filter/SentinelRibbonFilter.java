@@ -56,7 +56,7 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             // service target
             String serviceTarget = (String) ctx.get(SERVICE_ID_KEY);
             String serviceOrigin = "origin";
-            logger.info("serviceTarget:{} , serviceOrigin:{}", serviceTarget,serviceOrigin);
+            logger.info("serviceTarget:{} , serviceOrigin:{}", serviceTarget, serviceOrigin);
             ContextUtil.enter(serviceTarget, serviceOrigin);
             serviceEntry = SphU.entry(serviceTarget, EntryType.IN);
 
@@ -71,7 +71,7 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             }
             // Parse the request origin using registered origin parser.
             String urlOrigin = parseOrigin(ctx.getRequest());
-            logger.info("uriTarget:{}, urlOrigin:{}", uriTarget,urlOrigin);
+            logger.info("uriTarget:{}, urlOrigin:{}", uriTarget, urlOrigin);
             ContextUtil.enter(uriTarget, urlOrigin);
             uriEntry = SphU.entry(uriTarget, EntryType.IN);
             RibbonCommandContext commandContext = buildCommandContext(ctx);
@@ -88,12 +88,13 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             Tracer.trace(ex);
             throw new ZuulRuntimeException(ex);
         } finally {
+            if (uriEntry != null) {
+                uriEntry.exit();
+            }
             if (serviceEntry != null) {
                 serviceEntry.exit();
             }
-            if(uriEntry!=null){
-                uriEntry.exit();
-            }
+
             ContextUtil.exit();
         }
     }
