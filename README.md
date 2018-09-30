@@ -10,22 +10,26 @@ this project is for zuul1.
 
 **eureka-server**:
 
-module used for discovery server. when service restart. it should be restart.
+module used for discovery server. when service restart. it should be restart.  
+- `EurekaServiceApplication`: runs eureka service on port 8671. access by `http://localhost:8761/`
 
 **zuul-backend**
 
-backend service after gateway. consist of two application book and coke.
+backend service after gateway. consist of two application book and coke.  
+- `CokeApplication`: hosts a `/coke` ,`/except` service on port 9082
+- `BookApplication`: hosts a `/coke` ,`/except` service with different implementation on port 9081
 
 **zuul-gateway**
 
-zuul gateway application
+zuul gateway application.
+- `GatewayApplication` runs zuul on port 8990.
 
 
 ## How to run
 
 run as spring boot application
 
-```
+```bash
 curl -i localhost:8990/coke/coke
 
 curl -i localhost:8990/coke/block
