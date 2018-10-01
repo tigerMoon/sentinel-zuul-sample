@@ -1,10 +1,12 @@
 # sentinel-zuul-sample
-This is simple project for [alibaba/Sentinel](https://github.com/alibaba/Sentinel) spring cloud zuul integration sample.
+
+Zuul does not provide rateLimit function, If use `SentinelRibbonFilter` route filter. it wrapped by Hystrix Command. so only provide Service level 
+circuit protect. 
 
 Sentinel can provide `ServiceId` level and `API Path` level flow control for zuul gateway service. 
+This is simple project for [alibaba/Sentinel](https://github.com/alibaba/Sentinel) spring cloud zuul integration sample. 
 
-*Note*  
-this project is for zuul1.
+*Note*: this project is for zuul 1.
 
 ## Modules
 
@@ -84,13 +86,14 @@ EntranceNode: machine-root(t:3 pq:0 bq:0 tq:0 rt:0 prq:0 1mp:0 1mb:0 1mt:0)
 `---/book/coke` is api path.
 
 
-
 ## Integration with Sentinel DashBord
 
 1. start [Sentinel DashBord](https://github.com/alibaba/Sentinel/wiki/%E6%8E%A7%E5%88%B6%E5%8F%B0).
 
-2. add vm property to zuul-gateway. `-Dcsp.sentinel.dashboard.server=localhost:8088 -Dcsp.sentinel.api.port=18990`
+2. add vm property to zuul-gateway. `-Dcsp.sentinel.dashboard.server=localhost:8088 -Dcsp.sentinel.api.port=18990`. 
+
+3. Sentinel has full rule config features. see [Dynamic-Rule-Configuration](https://github.com/alibaba/Sentinel/wiki/Dynamic-Rule-Configuration)
 
 ## Fallback
 
-zuul provide `FallbackProvider` to cope with fall back logic. 
+Zuul provide `FallbackProvider` to cope with fall back logic. 
