@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.zuul.filters.ProxyRequestHelper;
 import org.springframework.cloud.netflix.zuul.util.ZuulRuntimeException;
 import org.springframework.util.LinkedMultiValueMap;
@@ -28,6 +28,7 @@ import org.springframework.util.StreamUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
 public class SentinelOkHttpRoutingFilter extends ZuulFilter {
 
     @Autowired
-    private DiscoveryClient discoveryClient;
+    private LoadBalancerClient loadBalancer;
 
     private static final String EMPTY_ORIGIN = "";
 
@@ -122,9 +123,10 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
         String method = request.getMethod();
 
         String uri = this.helper.buildZuulRequestURI(request);
-        List<ServiceInstance> instances = discoveryClient.getInstances((String) context.get(SERVICE_ID_KEY));
-        String host = "http://" + String.valueOf(instances.get(0).getHost()) + ":" + String.valueOf(instances.get(0).getPort());
-        String url = host + uri;
+        String serviceId = (String) context.get(SERVICE_ID_KEY);
+        ServiceInstance instance = loadBalancer.choose(serviceId);
+        URI storesUri = URI.create(String.format("http://%s:%s%s", instance.getHost(), instance.getPort(), uri));
+        String url = storesUri.toURL().toString();
         logger.info("discovery url:{}", url);
         Headers.Builder headers = new Headers.Builder();
         Enumeration<String> headerNames = request.getHeaderNames();
