@@ -10,6 +10,7 @@ import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.alibaba.csp.sentinel.adapter.servlet.util.FilterUtil;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowException;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -79,9 +80,10 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             setResponse(response);
             return response;
         } catch (ZuulException ex) {
+            Tracer.trace(ex);
             throw new ZuulRuntimeException(ex);
         } catch (BlockException ex) {
-            logger.warn("block exception:{}", ex);
+            Tracer.trace(ex);
             // do the logic when flow control happens.
             throw new ZuulRuntimeException(ex);
         } catch (Exception ex) {

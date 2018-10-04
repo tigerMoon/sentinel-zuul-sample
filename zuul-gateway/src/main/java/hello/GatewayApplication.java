@@ -67,7 +67,8 @@ public class GatewayApplication {
     public static void main(String[] args) {
         new SpringApplicationBuilder(GatewayApplication.class)
                 .properties("zuul.RibbonRoutingFilter.route.disable=true",
-                        "zuul.SentinelRibbonFilter.route.disable=true")
+                        "zuul.SentinelRibbonFilter.route.disable=false",
+                        "zuul.SentinelOkHttpRoutingFilter.route.disable=true")
                 .run(args);
     }
 }

@@ -97,6 +97,7 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             forwardHttpRequest();
         } catch (BlockException e1) {
             // do the logic when flow control happens.
+            Tracer.trace(e1);
             throw new ZuulRuntimeException(e1);
         } catch (Exception ex) {
             Tracer.trace(ex);
