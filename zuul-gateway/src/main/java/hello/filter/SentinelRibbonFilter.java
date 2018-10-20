@@ -73,7 +73,6 @@ public class SentinelRibbonFilter extends RibbonRoutingFilter {
             // Parse the request origin using registered origin parser.
             String urlOrigin = parseOrigin(ctx.getRequest());
             logger.info("uriTarget:{}, urlOrigin:{}", uriTarget, urlOrigin);
-            ContextUtil.enter(uriTarget, urlOrigin);
             uriEntry = SphU.entry(uriTarget, EntryType.IN);
             RibbonCommandContext commandContext = buildCommandContext(ctx);
             ClientHttpResponse response = forward(commandContext);

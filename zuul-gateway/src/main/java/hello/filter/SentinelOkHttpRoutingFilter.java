@@ -92,7 +92,6 @@ public class SentinelOkHttpRoutingFilter extends ZuulFilter {
             // Parse the request origin using registered origin parser.
             String urlOrigin = parseOrigin(ctx.getRequest());
             logger.info("urlTarget:{}, urlOrigin:{}", urlTarget, urlOrigin);
-            ContextUtil.enter(urlTarget, urlOrigin);
             uriEntry = SphU.entry(urlTarget, EntryType.IN);
             forwardHttpRequest();
         } catch (BlockException e1) {
